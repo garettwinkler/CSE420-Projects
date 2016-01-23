@@ -1,5 +1,5 @@
 .data 
-	string: .asciiz "HI HI"
+	string: .asciiz "WELCOME TO COMPUTER ARCHITECTURE CLASS"
 
 .text
 
@@ -10,10 +10,10 @@ main:
 	lowerCaseLoop:
 		add $s1, $s0, $t0				#$s1 = $s0[$t0]
 		lb $s2, 0($s1)					#$s2 = character to shift
-		beq $s2, $zero, exit			#if $s2 = null (end of string) exit the program
-		bne $s2, 0x20, charToLowerCase	#only add 20 if not the space charater
+		beq $s2, $zero, exit				#if $s2 = null (end of string) exit the program
+		bne $s2, 0x20, charToLowerCase			#only add 20 if not the space charater
 		finishLoop:
-			sb $s2, ($s1)				#load shifted char from $s2 back into $s1
+			sb $s2, ($s1)				#load shifted char from $s1 back into $s1
 			addi $t0, $t0, 1			#increment i
 			j lowerCaseLoop
 		
@@ -22,5 +22,9 @@ main:
 		j finishLoop					#back to finish loop
 	
 	exit:
+		la $a0, string					# loading string into $a0 (used to output strings I guess)
+		li $v0, 4					# 4 is for printing strings 
+		syscall
+	
 		li $v0, 10
-    	syscall
+    		syscall
