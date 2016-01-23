@@ -2,14 +2,16 @@
 	intpromptU: .asciiz "Enter the value for 'u': "
 	intpromptV: .asciiz "Enter the value for 'v': "
 	newline: .asciiz "\n"
+	result:	 .asciiz "Result is: "		
+	equation: .asciiz "10u2 + 4uv + v2 - 1 = "
 	
 .text
 .globl main
 
 main:
 	#Prints, gets, and saves prompt for u
-	la	$a0, intpromptU		#load the prompt for u
-	jal	printstring			#print the prompt for u
+	la  $a0, intpromptU		#load the prompt for u
+	jal printstring			#print the prompt for u
 	jal getint				#gets u
 	add $s0, $zero, $v0		#saves u in $s0
 
@@ -33,12 +35,12 @@ main:
 	add $s3, $zero, $v0		#$s3 = v^2
 
 	add $a0, $s2, $zero		#loads u^2 into $a0 for multiplcation with 10
-	addi $a1, $zero, 10		#loads 10 into $a1 for 10 * u^2
+	addi $a1, $zero, 10	#loads 10 into $a1 for 10 * u^2
 	jal Multiply 			#computes 10 * u^2
 	add $s4, $zero, $v0		#loads 10 * u^2 into $s4
 
 	add $a0, $s0, $zero		#puts u into $a0
-	addi $a1, $zero, 4		#puts 4 into $a1
+	addi $a1, $zero, 4	#puts 4 into $a1
 	jal Multiply 			#computes 4 * u
 	add $s5, $zero, $v0 	#loads 4 * u into $s5
 
@@ -52,8 +54,20 @@ main:
 	add $s6, $s4, $s5		#$s6 = 10 * u^2 + 4 * u * v
 	add $s6, $s6, $s3 		#$s6 += v^2
 	addi $s6, $s6, -1		#$s6 -= 1
+	
+	#Prints new line
+	la $a0, newline			
+	li $v0, 4			
+	syscall
 
-	li $v0, 10				#exits program
+	la $a0, equation		#load the result output line
+	jal printstring			#print the result line
+
+	li $v0, 1			#print the result
+	add $a0, $s6, $zero
+	syscall
+
+	li $v0, 10			#exits program
    	syscall
 
 printstring:
@@ -71,9 +85,9 @@ getint:
 # Description: 		This procedure will return the integer entered by the user 
 #					on the keyboard (console input)
 
-	li 	$v0, 5 			#read integer
-	syscall				#do it
-	jr $ra				#`return, result is already in $v0
+	li $v0, 5 			# read integer
+	syscall				# do it
+	jr $ra				# return, result is already in $v0
 
 Square:
 # Input parameters:	int to square
@@ -82,7 +96,7 @@ Square:
 
 	add $t0, $a0, $zero	#adds $a0 into temp $t0 for multiplication
 	mult $a0, $t0		#multiplies $a0 and $t0 (which is $a0 * $a0, squaring the number)
-	mflo $v0			#moves multiplcation product from LO into $vo for return
+	mflo $v0			#moves multiplcation product from LO into $v0 for return
 	jr $ra 				#jumps back to main
 
 Multiply:
