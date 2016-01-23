@@ -1,0 +1,57 @@
+# Title:	Filename:
+# Author:	Date:
+# Description:
+# Input:
+# Output:
+
+################# Data segment #####################
+.data
+
+array: .word   0 : 10       # "array" of 10 words 
+size: .word  10             # size of "array" 
+
+################# Code segment #####################
+.text
+.globl main
+
+main:	
+	la $t0, array		# load address of array
+	la $t9, size		# load address of size variable
+	
+	lw $t9, 0($t9)		# load array size
+	li $t1, 10		# Counter for loop, will execute 10 (from 10 to 1) times.  Will decrement to use bgtz
+	li $t2, 0		# i = 0
+		
+	loop:
+		li $a0, 3		# puts 3 in $a0, to use in 3(i+1)
+		addi $a1, $t2, 1	# storing (i+1) to $a1
+		jal Multiply		# performs 3(i+1) ie $a0 * $a1, returns result in v0
+		sw $v0, 0($t0)		# a[i] = 3(i+1)
+		
+		addi $t0, $t0, 4	# increment index (so like 0($t0) will be 4($t0) next time??)
+		addi $t1, $t1, -1	# decrement loop counter
+		addi $t2, $t2, 1	# i++
+		bgtz $t1, loop		#repeat until $t0 is 0  (10 times)
+		
+		
+	
+	
+	li $v0, 10	# Exit program
+	syscall
+
+
+
+Multiply:
+# Input parameters:	ints to multiply
+# Return values:	$v0 = product of two arguments
+# Description:		Takes two ints to multiply and returns the product
+
+	mult $a0, $a1	#multiples two argument ints
+	mflo $v0		#moves from LO register into $v0
+	jr $ra 			#jumps back to main
+
+PSum:
+#Input parameters:	int *s, int *e
+#Return values:		none
+#Description: 		*s=+*e
+	
